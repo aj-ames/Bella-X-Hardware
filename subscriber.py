@@ -35,17 +35,17 @@ client.connect(broker_address, port=port)  # connect to broker
 
 client.loop_start()  # start the loop
 
-while Connected != True:  # Wait for connection
+while Connected is not True:  # Wait for connection
     time.sleep(0.1)
 
 client.subscribe("bella")
 
-try:
-    while True:
+while True:
+    try:
         time.sleep(1)
-
-except (KeyboardInterrupt, SystemExit):
-    print()
-    print("Exiting..")
-    client.disconnect()
-    client.loop_stop()
+    except (KeyboardInterrupt, SystemExit):
+        break
+print()
+print("Exiting..")
+client.disconnect()
+client.loop_stop()
