@@ -1,10 +1,21 @@
+"""Publisher code to send data using PahoMQTT."""
 import paho.mqtt.client as mqtt
 
-# This is the Publisher
+broker_address = "192.168.0.28"  # Broker address
+port = 1883  # Broker port
+user = "astr1x"  # Connection username
+password = "astr1x2096"  # Connection password
 
 client = mqtt.Client()
+client.username_pw_set(user, password=password)  # set username and password
+client.connect(broker_address, port)  # connect to broker
+
 while True:
-    client.connect("iot.eclipse.org", 1883, 60)
-    message = input("Enter the message: ")
-    client.publish("bella", message)
-    client.disconnect()
+    try:
+        message = input("Enter the message: ")
+        client.publish("bella", message)
+    except (KeyboardInterrupt, SystemExit):
+        print()
+        print("Exiting..")
+        client.disconnect()
+        break
