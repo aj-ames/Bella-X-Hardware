@@ -15,7 +15,7 @@ while True:
         message = input("Enter the message: ")
         client.publish("bella", message)
     except (KeyboardInterrupt, SystemExit):
-        print()
-        print("Exiting..")
-        client.disconnect()
         break
+client.disconnect()
+print()
+print("Exiting..")
