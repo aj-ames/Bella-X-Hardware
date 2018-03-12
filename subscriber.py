@@ -40,12 +40,11 @@ while Connected is not True:  # Wait for connection
 
 client.subscribe("bella")
 
-while True:
-    try:
+try:
+    while True:
         time.sleep(1)
-    except (KeyboardInterrupt, SystemExit):
-        break
-print()
-print("Exiting..")
-client.disconnect()
-client.loop_stop()
+except (KeyboardInterrupt, SystemExit):
+    print()
+    print("Exiting..")
+    client.disconnect()
+    client.loop_stop()
