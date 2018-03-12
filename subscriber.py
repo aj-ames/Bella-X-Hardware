@@ -18,12 +18,14 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, message):
+    """on_message is executed whenever a message is received."""
     print("Message received: " + str(message.payload.decode("utf-8")),
           ", Topic: ", message.topic, ", Retained: ", bool(message.retain))
 
 
 def get_args_values(args=None):
-    parser = argparse.ArgumentParser(description="Get info")
+    """Method to handle command line arguments."""
+    parser = argparse.ArgumentParser(description="Arguments supported..")
     parser.add_argument('-H', '--host',
                         help='Broker IP',
                         default='localhost')
@@ -35,7 +37,7 @@ def get_args_values(args=None):
                         default='astr1x')
     parser.add_argument('-P', '--password',
                         help="password",
-                        default="astr1x2096")
+                        default='astr1x2096')
 
     info = parser.parse_args(args)
     return (info.host,

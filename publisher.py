@@ -5,7 +5,8 @@ import sys
 
 
 def get_args_values(args=None):
-    parser = argparse.ArgumentParser(description="Get info")
+    """Method to handle command line arguments."""
+    parser = argparse.ArgumentParser(description="Arguments supported..")
     parser.add_argument('-H', '--host',
                         help='Broker IP',
                         default='localhost')
