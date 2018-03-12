@@ -18,7 +18,8 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, message):
-    print("Message received: " + str(message.payload.decode("utf-8")))
+    print("Message received: " + str(message.payload.decode("utf-8")),
+          ", Topic: ", message.topic, ", Retained: ", bool(message.retain))
 
 
 def get_args_values(args=None):

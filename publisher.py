@@ -41,7 +41,7 @@ client.connect(broker_address, port)  # connect to broker
 while True:
     try:
         message = input("Enter the message: ")
-        client.publish("bella", message)
+        client.publish("bella", message, qos=1, retain=True)
     except (KeyboardInterrupt, SystemExit):
         break
 client.disconnect()
