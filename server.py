@@ -17,9 +17,7 @@
  *  FF - Fan turned Off
  *
  *
- *  P.S. All commands are followed by ':' character to mark Command Termination
- *
- *  Make sure to set the board as "Arduino/Genuino Mega 2560" before compiling.
+ *  PS: All commands are followed by ':' character to mark Command Termination
  *
 """
 import RPi.GPIO as GPIO
@@ -27,6 +25,9 @@ import RPi.GPIO as GPIO
 # One time setup at start
 GPIO.setmode(GPIO.BCM)
 GPIO.setup()
+room_cmd_list = ["RL1O", "RL1F", "RL2O", "RL2F", "RLS", "FT", "FF"]
+kitchen_cmd_list = ["KS"]
+garden_cmd_list = ["GSS", "GSO", "GSF"]
 
 # Pin 2 and 3 for Relay
 light1 = 2  # Physical pin: 3
@@ -42,6 +43,14 @@ ep2 = 1  # Physical pin: 28
 wateringTime = 40
 triggerMiostureContent = 200
 warningMoistureContent = 750
+
+# Pins for motor
+motor1Pin1 = 17  # Physical pin: 11
+motor1Pin2 = 18  # Physical pin: 12
+motor1En = 27  # Physical pin: 13
+motor2pin1 = 22  # Physical pin: 15
+motor2pin2 = 23  # Physical pin: 16
+motor2En = 24  # Physical pin: 18
 
 # To state the end of the command
 delimiter = ':'
