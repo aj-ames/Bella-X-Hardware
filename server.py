@@ -44,10 +44,6 @@ wateringTime = 40
 triggerMiostureContent = 200
 warningMoistureContent = 750
 
-# Pins for motor
-motor1Pin1 = 17  # Physical pin: 11
-motor1Pin2 = 18  # Physical pin: 12
-motor1En = 27  # Physical pin: 13
 motor2pin1 = 22  # Physical pin: 15
 motor2pin2 = 23  # Physical pin: 16
 motor2En = 24  # Physical pin: 18
