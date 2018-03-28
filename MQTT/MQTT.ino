@@ -1,10 +1,16 @@
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
+#include <SoftwareSerial.h>
+#define BAUD_RATE 9600
+
+// Sowftware serial
+SoftwareSerial swSer(14, 12, false, 256);
+
 
 // EDIT THESE LINES TO MATCH YOUR SETUP
-#define MQTT_SERVER "192.168.0.101"
-const char* ssid = "C-10";
-const char* password = "qazwsxedc@12345";
+#define MQTT_SERVER "192.168.0.34"
+const char* ssid = "Bubble";
+const char* password = "Bubble101";
 const char* mqtt_username = "astr1x";
 const char* mqtt_password = "astr1x2096";
 
@@ -16,13 +22,22 @@ char* pubTopic = "bellax/ack";
 
 // Callback function header
 void callback(char* topic, byte* payload, unsigned int length);
+void reconnect();
+
+// Global variable
+bool received = false;
+char msg[5];
+String ack = "";
+char ch;
+char delimiter = ':';
 
 WiFiClient wifiClient;
 PubSubClient client(MQTT_SERVER, 1883, callback, wifiClient);
 
 void setup() {
   // Start the serial line for debugging
-  Serial.begin(115200);
+  Serial.begin(BAUD_RATE);
+  swSer.begin(BAUD_RATE);
   delay(100);
 
   // Start wifi subsystem
@@ -42,7 +57,7 @@ void loop() {
 
   // Maintain MQTT connection
   client.loop();
-
+  
   // MUST delay to allow ESP8266 WIFI functions to run
   delay(10); 
 }
@@ -51,27 +66,43 @@ void loop() {
 void callback(char* topic, byte* payload, unsigned int length) {
   
   // Convert topic to string to make it easier to work with
-  String topicStr = topic; 
-
+  String topicStr = topic;
+  // We expect a reply 
+  received = false;
   // Print out some debugging info
   //Serial.println("Callback update.");
   //Serial.print("Topic: ");
-  //Serial.print(topicStr);
-  for (int c = 0; c < length; c++)
-    Serial.write(payload[c]);
-  Serial.println();
-  //turn the light on if the payload is '1' and publish to the confirmation topic so the python script can log it
-  if(payload[0] == '1') {
-    //digitalWrite(lightPin, HIGH);
-    client.publish(pubTopic, "On");
+  //Serial.println(topicStr);
+  //Serial.println("Here");
+  Serial.write(payload, length);
+  //Serial.flush();
+  //swSer.write(payload, length);
+  //swSer.flush();
+  while (!received) {
+    //Serial.println("Wating..");
+    if (Serial.available() > 0) {
+      ack = "";
+      while (Serial.available()) {
+        ch = Serial.read();
+        delay(5);
+        if (ch == delimiter) {
+          received = true;
+          break;
+        } else {
+          ack += ch;
+        }
+      delay(5);
+     }
+     //Serial.println(ack);
+     //Serial.flush();
+    }
+   ack.toCharArray(msg, ack.length() + 1);
+   client.publish(pubTopic, msg);
+   yield();
   }
-
-  //turn the light off if the payload is '0' and publish to the confirmation topic so the python script can log it
-  else if (payload[0] == '0') {
-    //digitalWrite(lightPin, LOW);
-    client.publish(pubTopic, "Off");
-  }
+  //Serial.println("Done");
 }
+
 
 //networking functions
 
@@ -90,10 +121,10 @@ void reconnect() {
   }
 
   //print out some more debug once connected
-  // Serial.println("");
-  // Serial.println("WiFi connected");  
-  // Serial.println("IP address: ");
-  // Serial.println(WiFi.localIP());
+   //Serial.println("");
+   //Serial.println("WiFi connected");  
+   //Serial.println("IP address: ");
+   //Serial.println(WiFi.localIP());
   }
 
   //make sure we are connected to WIFI before attemping to reconnect to MQTT

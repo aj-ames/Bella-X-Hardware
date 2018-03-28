@@ -23,6 +23,7 @@
 
 #include <Servo.h>
 // Pin 10 and 11 for Relay
+#define BAUD_RATE 9600
 #define light1 10
 #define light2 11
 
@@ -86,8 +87,8 @@ void getStatus();
 long microToCms(long microseconds) { return microseconds / 29 / 2; }
 
 void setup() {
-  Serial.begin(9600);
-  Serial1.begin(9600);
+  Serial.begin(BAUD_RATE);
+  Serial1.begin(BAUD_RATE);
   Serial.println("Wassup Bella!!!!!");
   // Serial1.println("Wassup Bella!!!!!");
   setupFunc();
@@ -98,6 +99,8 @@ void loop() {
   if (Serial1.available() > 0) {
     cmd = "";
     while (Serial1.available()) {
+      // Serial.println("1");
+      // Serial.flush();
       ch = Serial1.read();
       delay(5);
       if (ch == delimiter) {
@@ -122,18 +125,22 @@ void loop() {
       cmdAvailable = false;
     }
     // Garden
-    if (cmd.equals("GSS") || cmd.equals("GSO") || cmd.equals("GSF")) {
+    else if (cmd.equals("GSS") || cmd.equals("GSO") || cmd.equals("GSF")) {
       garden(cmd);
       cmdAvailable = false;
     }
     // Get status
-    if (cmd.equals("X")) {
+    else if (cmd.equals("X")) {
       getStatus();
       cmdAvailable = false;
     }
-    if (cmd.equals("Z")) {
+    else if (cmd.equals("Z")) {
       turnOff();
       cmdAvailable = false;
+    }
+    else {
+      Serial1.println("Wrong Command!:");
+      Serial.flush();
     }
   }
 } // Void loop
