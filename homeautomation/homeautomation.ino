@@ -139,8 +139,9 @@ void loop() {
       cmdAvailable = false;
     }
     else {
-      Serial1.println("Wrong Command!:");
+      Serial.println(cmd);
       Serial.flush();
+      cmdAvailable = false;
     }
   }
 } // Void loop
