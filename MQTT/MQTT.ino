@@ -1,3 +1,10 @@
+/*
+ * To get everything working, do the following:
+ * Step un: First connect just the ESP and come out of the loop. This is because of theretained message 
+ * Step deux: Connect the TX(ESP) --> RX(Mega) and RX(ESP) --> TX(Mega) 
+ * Step trois: No such thing now everything works! Bien joué  
+ */
+
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
 #include <SoftwareSerial.h>
@@ -75,7 +82,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
   //Serial.println(topicStr);
   //Serial.println("Here");
   Serial.write(payload, length);
-  //Serial.flush();
+  Serial.println();
+  Serial.flush();
   //swSer.write(payload, length);
   //swSer.flush();
   while (!received) {
@@ -91,16 +99,15 @@ void callback(char* topic, byte* payload, unsigned int length) {
         } else {
           ack += ch;
         }
-      delay(5);
      }
-     //Serial.println(ack);
-     //Serial.flush();
     }
-   ack.toCharArray(msg, ack.length() + 1);
-   client.publish(pubTopic, msg);
    yield();
   }
-  //Serial.println("Done");
+
+  if (received) {
+    ack.toCharArray(msg, ack.length() + 1);
+    client.publish(pubTopic, msg);
+  }
 }
 
 
@@ -118,7 +125,7 @@ void reconnect() {
     while (WiFi.status() != WL_CONNECTED) {
       delay(500);
       // Serial.print(".");
-  }
+    }
 
   //print out some more debug once connected
    //Serial.println("");
