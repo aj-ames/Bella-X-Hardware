@@ -453,23 +453,6 @@ void garden(String cmd) {
 }
 
 void startSprinkler() {
-  /*for(int i = 0; i < 3; i++) {
-   servo1.write(0);// For Position at 0 degrees
-    digitalWrite(motor1En,HIGH);
-    digitalWrite(motor1Pin1,HIGH);
-    digitalWrite(motor1Pin2,LOW);
-    delay(500);
-    servo1.write(90);// For Position at 90 degrees
-    digitalWrite(motor1En,HIGH);
-    digitalWrite(motor1Pin1,HIGH);
-    digitalWrite(motor1Pin2,LOW);
-    delay(500);
-    servo1.write(180);// For Position at 180 degrees
-    digitalWrite(motor1En,HIGH);
-    digitalWrite(motor1Pin1,HIGH);
-    digitalWrite(motor1Pin2,LOW);
-    delay(500);
-  }*/
   digitalWrite(motor1En, HIGH);
   digitalWrite(motor1Pin1, HIGH);
   digitalWrite(motor1Pin2, LOW);
