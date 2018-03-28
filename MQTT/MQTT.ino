@@ -10,9 +10,6 @@
 #include <SoftwareSerial.h>
 #define BAUD_RATE 9600
 
-// Sowftware serial
-SoftwareSerial swSer(14, 12, false, 256);
-
 
 // EDIT THESE LINES TO MATCH YOUR SETUP
 #define MQTT_SERVER "192.168.0.34"
@@ -33,7 +30,7 @@ void reconnect();
 
 // Global variable
 bool received = false;
-char msg[5];
+char msg[100];
 String ack = "";
 char ch;
 char delimiter = ':';
@@ -44,7 +41,6 @@ PubSubClient client(MQTT_SERVER, 1883, callback, wifiClient);
 void setup() {
   // Start the serial line for debugging
   Serial.begin(BAUD_RATE);
-  swSer.begin(BAUD_RATE);
   delay(100);
 
   // Start wifi subsystem
@@ -76,16 +72,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
   String topicStr = topic;
   // We expect a reply 
   received = false;
-  // Print out some debugging info
-  //Serial.println("Callback update.");
-  //Serial.print("Topic: ");
-  //Serial.println(topicStr);
-  //Serial.println("Here");
+  // Send it to MEGA 
   Serial.write(payload, length);
   Serial.println();
   Serial.flush();
-  //swSer.write(payload, length);
-  //swSer.flush();
+
   while (!received) {
     //Serial.println("Wating..");
     if (Serial.available() > 0) {
@@ -101,6 +92,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
         }
      }
     }
+   // To prevent the watch dog timer for running out...
    yield();
   }
 
@@ -117,59 +109,29 @@ void reconnect() {
 
   //attempt to connect to the wifi if connection is lost
   if(WiFi.status() != WL_CONNECTED) {
-    //debug printing
-    // Serial.print("Connecting to ");
-    // Serial.println(ssid);
 
     //loop while we wait for connection
     while (WiFi.status() != WL_CONNECTED) {
       delay(500);
       // Serial.print(".");
     }
-
-  //print out some more debug once connected
-   //Serial.println("");
-   //Serial.println("WiFi connected");  
-   //Serial.println("IP address: ");
-   //Serial.println(WiFi.localIP());
-  }
+}
 
   //make sure we are connected to WIFI before attemping to reconnect to MQTT
   if(WiFi.status() == WL_CONNECTED){
   // Loop until we're reconnected to the MQTT server
     while (!client.connected()) {
-      //Serial.print("Attempting MQTT connection...");
 
       // Generate client name based on MAC address and last 8 bits of microsecond counter
       String clientName;
-      clientName += "esp8266-";
-      uint8_t mac[6];
-      WiFi.macAddress(mac);
-      clientName += macToStr(mac);
+      clientName += "BellaX-Hardware";
 
       //if connected, subscribe to the topic(s) we want to be notified about
       if (client.connect((char*) clientName.c_str(), mqtt_username, mqtt_password)) {
         //Serial.print("\tMTQQ Connected");
         client.subscribe(subTopic);
       }
-
-      //otherwise print failed for debugging
-      else { 
-        //Serial.println("\tFailed."); abort();
-      }
     }
   }
-}
-
-//generate unique name from MAC addr
-String macToStr(const uint8_t* mac) {
-  String result;
-  for (int i = 0; i < 6; ++i) {
-    result += String(mac[i], 16);
-    if (i < 5) {
-      result += ':';
-    }
-  }
-  return result;
 }
 
