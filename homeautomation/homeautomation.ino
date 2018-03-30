@@ -130,15 +130,13 @@ void loop() {
       cmdAvailable = false;
     }
     // Get status
-    else if (cmd.equals("X")) {
+    else if (cmd.equals("Z")) {
       getStatus();
       cmdAvailable = false;
-    }
-    else if (cmd.equals("Z")) {
+    } else if (cmd.equals("X")) {
       turnOff();
       cmdAvailable = false;
-    }
-    else {
+    } else {
       Serial.println(cmd);
       Serial.flush();
       cmdAvailable = false;
