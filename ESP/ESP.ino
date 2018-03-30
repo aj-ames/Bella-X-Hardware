@@ -10,12 +10,13 @@ const char* mqtt_username = "astr1x";
 const char* mqtt_password = "astr1x2096";
 
 // Pins
-const int bulb1 = D1;
-const int bulb2 = D2;
-const int fan = D3;
-const int motorPin1 = D5;
-const int motorPin2 = D6; 
-const int motorEn = D7;
+// D1 - SCL; D2 - SDA
+const int bulb1 = D3;
+const int bulb2 = D4;
+const int fan = D5;
+const int motorPin1 = D6;
+const int motorPin2 = D7; 
+const int motorEn = D8;
 
 
 // Topic to subscribe to for the commands
