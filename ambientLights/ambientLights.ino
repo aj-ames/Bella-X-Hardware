@@ -25,7 +25,7 @@ void callback(char* topic, byte* payload, unsigned int length);
 void reconnect();
 
 // Global variable
-bool flag = false;
+bool flag = false, stat = false;
 char msg[100];
 String cmd = "";
 char delimiter = ':';
@@ -175,10 +175,24 @@ void callback(char* topic, byte* payload, unsigned int length) {
   String topicStr = topic;
   // We expect a reply 
   cmd = String((char *)payload).substring(0,length);
-  if(cmd == "AMO:")
-    flag = true;
-  else if(cmd == "AMF:")
-    flag = false;
+  if(cmd == "AMO:") {
+    if(stat)
+      client.publish(pubTopic, "AON:");
+     else {
+      client.publish(pubTopic, "4T:");
+      flag = true;
+      stat = true;
+     }
+  }
+  else if(cmd == "AMF:") {
+    if(!stat)
+      client.publish(pubTopic, "AOF:");
+     else {
+      client.publish(pubTopic, "4F:");
+      flag = false;
+      stat = false; 
+     }
+  }
   else {}
    // To prevent the watch dog timer for running out...
    yield();
