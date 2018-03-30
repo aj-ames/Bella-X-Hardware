@@ -12,7 +12,7 @@
  *  GSS - Garden status; return the moisture
  *  GSO - Garden sprinkler turned ON
  *  GSF - Garden sprinkler turned OFF
- *  FT - Fan turned On
+ *  FO - Fan turned On
  *  FF - Fan turned Off
  *
  *
@@ -119,7 +119,7 @@ void loop() {
     // Getting the work done
     // Room kitchen
     if (cmd.equals("RL1O") || cmd.equals("RL1F") || cmd.equals("RL2O") ||
-        cmd.equals("RL2F") || cmd.equals("KS") || cmd.equals("FT") ||
+        cmd.equals("RL2F") || cmd.equals("KS") || cmd.equals("FO") ||
         cmd.equals("FF")) {
       roomKitchen(cmd);
       cmdAvailable = false;
@@ -249,7 +249,7 @@ void roomKitchen(String cmd) {
     }
   }
   // Code for controllling the fan
-  if (cmd.equals("FT")) {
+  if (cmd.equals("FO")) {
     if (flag3) { // fan already on
       Serial.println("S2:");
       Serial.flush();
