@@ -100,7 +100,7 @@ void setup() {
 }
 
 void showTemp(float temp, float hud) {
-  display.drawBitmap(0, 5, img, 48, 50, 1);
+  // display.drawBitmap(0, 5, img, 48, 50, 1);
   display.setTextSize(1);
   display.setCursor(3, 0);
   display.println("Temperature/Humidity");
@@ -108,7 +108,7 @@ void showTemp(float temp, float hud) {
   display.setTextColor(WHITE);
   display.setCursor(60, 10);
   display.print(temp);
-  display.println("C");
+  display.println("°C");
   display.setCursor(60, 20);
   display.print(hud);
   display.println("%");
@@ -117,27 +117,32 @@ void showTemp(float temp, float hud) {
 }
 void loop() {
 
-  delay(1000); // Wait a few seconds between measurements.
+  // delay(1000); // Wait a few seconds between measurements.
   float h = dht.readHumidity();
-  float t = dht.readTemperature(); // Read temperature as Celsius
-
+  float t = dht.readTemperature();  // Read temperature as Celsius
+  int sensorValue = analogRead(A0); // read the input on analog pin 0
+  float voltage = sensorValue * (5.0 / 1023.0);
   if (isnan(h) || isnan(t)) {
     Serial.println("Failed to read from DHT sensor!");
     return;
   }
+  Serial.print("Voltage: ");
+  Serial.println(voltage); 
+  Serial.println("°C");
   Serial.print("Humidity: "); // show in serial monitor
   Serial.print(h);
-  Serial.print(" %\t");
+  Serial.print(" %, ");
   Serial.print("Temperature: "); // show in serial monitor
   Serial.print(t);
-  Serial.print(" *C \n");
+  Serial.println("°C");
   showTemp(t, h); // show temp
+
+  client.loop();
+  delay(1000);
 }
 
 // Read temperature
-String readTemp() { 
-  return String(dht.readTemperature());
-  }
+String readTemp() { return String(dht.readTemperature()); }
 
 // MQTT callback function
 void callback(char *topic, byte *payload, unsigned int length) {
@@ -148,7 +153,7 @@ void callback(char *topic, byte *payload, unsigned int length) {
   String cmd = String((char *)payload).substring(0, length);
   String temp = "S;3;";
   temp += readTemp();
-  const char* msg = temp.c_str();
+  const char *msg = temp.c_str();
   if (cmd.equals("L:T")) {
     client.publish("bellax/ack", msg);
   }
