@@ -99,19 +99,21 @@ void setup() {
   display.clearDisplay();
 }
 
-void showTemp(float temp, float hud) {
+void showTemp(float temp, float hud, float ldr) {
   // display.drawBitmap(0, 5, img, 48, 50, 1);
   display.setTextSize(1);
   display.setCursor(3, 0);
   display.println("Temperature/Humidity");
   display.setTextSize(1);
   display.setTextColor(WHITE);
-  display.setCursor(60, 10);
+  display.setCursor(20, 10);
   display.print(temp);
   display.println("°C");
-  display.setCursor(60, 20);
+  display.setCursor(20, 40);
   display.print(hud);
   display.println("%");
+  display.setCursor(40, 60);
+  display.println(ldr);
   display.display();
   display.clearDisplay();
 }
@@ -135,7 +137,7 @@ void loop() {
   Serial.print("Temperature: "); // show in serial monitor
   Serial.print(t);
   Serial.println("°C");
-  showTemp(t, h); // show temp
+  showTemp(t, h, voltage); // show temp
 
   client.loop();
   delay(1000);
