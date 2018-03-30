@@ -32,6 +32,13 @@ void reconnect();
 // Global variable
 bool stat_bulb1 = false, stat_bulb2 = false, stat_fan = false;
 String cmd = "";
+const int sensorIn = A0;
+int mVperAmp = 66; // use 185 for 10A Module, 100 for 20A Module and 66 for 30A Module
+
+double Voltage = 0;
+double VRMS = 0;
+double AmpsRMS = 0;
+
 
 WiFiClient wifiClient;
 PubSubClient client(MQTT_SERVER, 1883, callback, wifiClient);
@@ -90,6 +97,13 @@ void loop() {
 
   // Maintain MQTT connection
   client.loop();
+
+  // Collect Amps info
+  Voltage = getVPP();
+  VRMS = (Voltage/ 0.707) ;  //root 2 = 0.707 (Approx.)
+  AmpsRMS = (VRMS * 1000)/mVperAmp;
+  Serial.print(AmpsRMS);
+  Serial.println(" --- A (RMS)");
   
   // MUST delay to allow ESP8266 WIFI functions to run
   delay(10); 
@@ -202,4 +216,27 @@ void reconnect() {
   }
 }
 
+float getVPP() {
+  int readValue;             // Value read from the sensor
+  int maxValue = 0;          // Store min value here
+  int minValue = 1024;       // Store max value here
+  
+   uint32_t start_time = millis();
+   // Sample for 1 Sec
+   while((millis()-start_time) < 200)  {
+       readValue = analogRead(sensorIn);
+       // see if you have a new maxValue
+       if (readValue > maxValue) {
+           /*record the maximum sensor value*/
+           maxValue = readValue;
+       }
+       if (readValue < minValue) {
+           /*record the minimum sensor value*/
+           minValue = readValue;
+       }
+   }
+   
+   // Some magic here...
+   return ((maxValue - minValue) * 5.0)/1024.0;
+}
 
