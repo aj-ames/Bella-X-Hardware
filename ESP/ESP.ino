@@ -4,7 +4,7 @@
 
 // EDIT THESE LINES TO MATCH YOUR SETUP
 #define MQTT_SERVER "192.168.43.233"
-const char* ssid = "CIA_Survrillance_Drone";
+const char* ssid = "CIA_Surveillance_Drone";
 const char* password = "123454321";
 const char* mqtt_username = "astr1x";
 const char* mqtt_password = "astr1x2096";
@@ -40,6 +40,9 @@ void setupFunc() {
     pinMode(bulb1, OUTPUT);
     pinMode(bulb2, OUTPUT);
     pinMode(fan, OUTPUT);
+    pinMode(motorPin1, OUTPUT);
+    pinMode(motorPin2, OUTPUT);
+    pinMode(motorEn, OUTPUT);
 }
 
 
@@ -49,14 +52,34 @@ void setup() {
   Serial.begin(BAUD_RATE);
   delay(100);
 
-  // Start wifi subsystem
-  WiFi.begin(ssid, password);
 
-  // Attempt to connect to the WIFI network and then connect to the MQTT server
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
   reconnect();
 
-  // Wait a bit before starting the main loop
-  delay(2000);
+  Serial.println("");
+  Serial.println("WiFi connected");  
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  delay(5);
+  digitalWrite(bulb1, 0);
+  delay(100);
+  digitalWrite(bulb1, 1);
+  delay(100);
+  digitalWrite(bulb2, 0);
+  digitalWrite(bulb2, 1);
+  delay(100);
+
+  
 }
 
 
@@ -157,7 +180,7 @@ void reconnect() {
     //loop while we wait for connection
     while (WiFi.status() != WL_CONNECTED) {
       delay(500);
-      // Serial.print(".");
+      Serial.print(".");
     }
 }
 
