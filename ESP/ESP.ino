@@ -211,6 +211,14 @@ void callback(char* topic, byte* payload, unsigned int length) {
     client.publish(pubTopic, stat.c_str());
     delay(5);
   }
+  if(cmd.equals("Z")) {
+    stat_bulb1 = false; stat_bulb2 = false; stat_fan = false;
+    stat_ac = false; stat_fridge = false; stat_tv = false; stat_heater = false;
+    digitalWrite(bulb1, 1);
+    digitalWrite(bulb2, 1);
+    digitalWrite(fan, 1);
+    client.publish(subTopic, "AMF:");
+  }
 }
 
 void reconnect() {
