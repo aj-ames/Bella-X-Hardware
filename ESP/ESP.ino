@@ -27,6 +27,7 @@ void reconnect();
 
 // Global variable
 bool stat_bulb1 = false, stat_bulb2 = false, stat_fan = false;
+bool stat_ac = false, stat_fridge = false, stat_tv = false, stat_heater = false;
 String cmd = "";
 const int sensorIn = A0;
 int mVperAmp = 66; // use 185 for 10A Module, 100 for 20A Module and 66 for 30A Module
@@ -177,6 +178,38 @@ void callback(char* topic, byte* payload, unsigned int length) {
     digitalWrite(bulb1, 1);
     digitalWrite(bulb2, 1);
     delay(100);
+  }
+  if(cmd.equals("ACO")) stat_ac = true;
+  if(cmd.equals("ACF")) stat_ac = false;
+  if(cmd.equals("FDO")) stat_fridge = true;
+  if(cmd.equals("FDF")) stat_fridge = false;
+  if(cmd.equals("GO")) stat_heater = true;
+  if(cmd.equals("GF")) stat_heater = false;
+  if(cmd.equals("TO")) stat_tv = true;
+  if(cmd.equals("TF")) stat_tv = false;
+  if(cmd.equals("X")) {
+    String stat = "H:";
+    
+    if(stat_bulb1) stat += "T";
+    else stat += "F";
+
+    if(stat_ac) stat += "T";
+    else stat += "F";
+
+    if(stat_fan) stat += "T";
+    else stat += "F";
+
+    if(stat_fridge) stat += "T";
+    else stat += "F";
+
+    if(stat_heater) stat += "T";
+    else stat += "F";
+    
+    if(stat_tv) stat += "T";
+    else stat += "F";
+
+    client.publish(pubTopic, stat.c_str());
+    delay(5);
   }
 }
 
