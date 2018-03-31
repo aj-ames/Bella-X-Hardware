@@ -11,8 +11,8 @@ const char *mqtt_password = "astr1x2096";
 
 // Pins
 // D1 - SCL; D2 - SDA
-const int bulb1 = D3;
-const int bulb2 = D4;
+const int bulb1 = D4;
+const int bulb2 = D8;
 const int fan = D5;
 const int motorPin1 = D6;
 const int motorPin2 = D7;
@@ -93,12 +93,12 @@ void loop() {
   // Maintain MQTT connection
   client.loop();
 
-  // Collect Amps info
-  Voltage = getVPP();
-  VRMS = (Voltage / 0.707); // root 2 = 0.707 (Approx.)
-  AmpsRMS = (VRMS * 1000) / mVperAmp;
-  Serial.print(AmpsRMS);
-  Serial.println(" --- A (RMS)");
+//  // Collect Amps info
+//  Voltage = getVPP();
+//  VRMS = (Voltage / 0.707); // root 2 = 0.707 (Approx.)
+//  AmpsRMS = (VRMS * 1000) / mVperAmp;
+//  Serial.print(AmpsRMS);
+//  Serial.println(" --- A (RMS)");
 
   // MUST delay to allow ESP8266 WIFI functions to run
   delay(10);

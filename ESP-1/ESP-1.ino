@@ -12,11 +12,9 @@ const char *mqtt_password = "astr1x2096";
 // Pins
 // D1 - SCL; D2 - SDA
 const int bulb1 = D3;
-const int bulb2 = D4;
-const int fan = D5;
-const int motorPin1 = D6;
-const int motorPin2 = D7;
-const int motorEn = D8;
+const int motorPin1 = D4;
+const int motorPin2 = D5;
+const int motorEn = D6;
 
 // Topic to subscribe to for the commands
 char *subTopic = "bellax/req";
@@ -30,11 +28,10 @@ void callback(char *topic, byte *payload, unsigned int length);
 void reconnect();
 
 // Global variable
-bool stat_bulb1 = false, stat_bulb2 = false, stat_fan = false;
+bool stat_bulb1 = false, stat_fan = false;
 String cmd = "";
 const int sensorIn = A0;
-int mVperAmp =
-    66; // use 185 for 10A Module, 100 for 20A Module and 66 for 30A Module
+int mVperAmp = 66; // use 185 for 10A Module, 100 for 20A Module and 66 for 30A Module
 
 double Voltage = 0;
 double VRMS = 0;
@@ -45,8 +42,6 @@ PubSubClient client(MQTT_SERVER, 1883, callback, wifiClient);
 
 void setupFunc() {
   pinMode(bulb1, OUTPUT);
-  pinMode(bulb2, OUTPUT);
-  pinMode(fan, OUTPUT);
   pinMode(motorPin1, OUTPUT);
   pinMode(motorPin2, OUTPUT);
   pinMode(motorEn, OUTPUT);
@@ -80,25 +75,22 @@ void setup() {
   delay(100);
   digitalWrite(bulb1, 1);
   delay(100);
-  digitalWrite(bulb2, 0);
-  digitalWrite(bulb2, 1);
-  delay(100);
 }
 
 void loop() {
   // Reconnect if connection is lost
   if (!client.connected() && WiFi.status() == 3)
     reconnect();
+    
+//  // Collect Amps info
+//  Voltage = getVPP();
+//  VRMS = (Voltage / 0.707); // root 2 = 0.707 (Approx.)
+//  AmpsRMS = (VRMS * 1000) / mVperAmp;
+//  Serial.print(AmpsRMS);
+//  Serial.println(" --- A (RMS)");
 
   // Maintain MQTT connection
   client.loop();
-
-  // Collect Amps info
-  Voltage = getVPP();
-  VRMS = (Voltage / 0.707); // root 2 = 0.707 (Approx.)
-  AmpsRMS = (VRMS * 1000) / mVperAmp;
-  Serial.print(AmpsRMS);
-  Serial.println(" --- A (RMS)");
 
   // MUST delay to allow ESP8266 WIFI functions to run
   delay(10);
@@ -130,28 +122,6 @@ void callback(char *topic, byte *payload, unsigned int length) {
       digitalWrite(bulb1, 1);
       stat_bulb1 = false;
       client.publish(pubTopic, "H:1F");
-    }
-  }
-  // Turn on Room Light 2
-  if (cmd.equals("RL2O")) {
-    if (stat_bulb2) { // light 2 is already on
-      client.publish(pubTopic, "H:2A");
-    } else {
-      stat_bulb2 = true;
-      // Relay Instruction
-      digitalWrite(bulb2, 0);
-      client.publish(pubTopic, "H:2T");
-    }
-  }
-  // Turn off Room Light 2
-  if (cmd.equals("RL2F")) {
-    if (!stat_bulb2) { // light 2 is already off
-      client.publish(pubTopic, "H:2B");
-    } else {
-      stat_bulb2 = false;
-      // Relay Instruction
-      digitalWrite(bulb2, 1);
-      client.publish(pubTopic, "H:2F");
     }
   }
   // Code for controllling the fan
@@ -220,7 +190,7 @@ float getVPP() {
 
   uint32_t start_time = millis();
   // Sample for 1 Sec
-  while ((millis() - start_time) < 1000) {
+  while ((millis() - start_time) < 100) {
     readValue = analogRead(sensorIn);
     // see if you have a new maxValue
     if (readValue > maxValue) {
@@ -232,7 +202,7 @@ float getVPP() {
       minValue = readValue;
     }
   }
-
+  client.loop();
   // Some magic here...
   return ((maxValue - minValue) * 5.0) / 1024.0;
 }

@@ -14,10 +14,6 @@ const char* mqtt_password = "astr1x2096";
 const int bulb1 = D3;
 const int bulb2 = D4;
 const int fan = D5;
-const int motorPin1 = D6;
-const int motorPin2 = D7; 
-const int motorEn = D8;
-
 
 // Topic to subscribe to for the commands
 char* subTopic = "bellax/req";
@@ -47,9 +43,6 @@ void setupFunc() {
     pinMode(bulb1, OUTPUT);
     pinMode(bulb2, OUTPUT);
     pinMode(fan, OUTPUT);
-    pinMode(motorPin1, OUTPUT);
-    pinMode(motorPin2, OUTPUT);
-    pinMode(motorEn, OUTPUT);
 }
 
 
@@ -98,12 +91,12 @@ void loop() {
   // Maintain MQTT connection
   client.loop();
 
-  // Collect Amps info
-  Voltage = getVPP();
-  VRMS = (Voltage/ 0.707) ;  //root 2 = 0.707 (Approx.)
-  AmpsRMS = (VRMS * 1000)/mVperAmp;
-  Serial.print(AmpsRMS);
-  Serial.println(" --- A (RMS)");
+//  // Collect Amps info
+//  Voltage = getVPP();
+//  VRMS = (Voltage/ 0.707) ;  //root 2 = 0.707 (Approx.)
+//  AmpsRMS = (VRMS * 1000)/mVperAmp;
+//  Serial.print(AmpsRMS);
+//  Serial.println(" --- A (RMS)");
   
   // MUST delay to allow ESP8266 WIFI functions to run
   delay(10); 
@@ -166,9 +159,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     } else {
       client.publish(pubTopic, "H:3T");
       stat_fan = true;
-      digitalWrite(motorEn, HIGH);
-      digitalWrite(motorPin1, HIGH);
-      digitalWrite(motorPin2, LOW);
+      digitalWrite(fan, LOW);
       delay(100);
     }
   }
@@ -178,11 +169,14 @@ void callback(char* topic, byte* payload, unsigned int length) {
     } else {
       client.publish(pubTopic, "H:3F");
       stat_fan = false;
-      digitalWrite(motorEn, LOW);
-      digitalWrite(motorPin1, LOW);
-      digitalWrite(motorPin2, LOW);
+      digitalWrite(fan, HIGH);
       delay(100);
     }
+  }
+  if(cmd.equals("AMO:")) {
+    digitalWrite(bulb1, 1);
+    digitalWrite(bulb2, 1);
+    delay(100);
   }
 }
 
