@@ -102,7 +102,7 @@ void reconnect() {
 
       // Generate client name based on MAC address and last 8 bits of microsecond counter
       String clientName;
-      clientName += "BellaX-Hardware";
+      clientName += "BellaX-Ambient";
 
       //if connected, subscribe to the topic(s) we want to be notified about
       if (client.connect((char*) clientName.c_str(), mqtt_username, mqtt_password)) {
@@ -177,7 +177,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   cmd = String((char *)payload).substring(0,length);
   if(cmd == "AMO:") {
     if(stat)
-      client.publish(pubTopic, "AON:");
+      client.publish(pubTopic, "4A:");
      else {
       client.publish(pubTopic, "4T:");
       flag = true;
@@ -186,7 +186,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   else if(cmd == "AMF:") {
     if(!stat)
-      client.publish(pubTopic, "AOF:");
+      client.publish(pubTopic, "4B:");
      else {
       client.publish(pubTopic, "4F:");
       flag = false;
